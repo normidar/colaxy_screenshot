@@ -150,7 +150,10 @@ class ScreenshotService {
     // runAppでアプリを起動
     final app =
         _buildAppWithLocale(locale: locale, page: page, modeInfo: modeInfo);
+
+    print('before runApp');
     runApp(app);
+    print('after runApp');
 
     // アプリが完全に描画されるまで待機
     await Future<void>.delayed(config.captureDelay);
