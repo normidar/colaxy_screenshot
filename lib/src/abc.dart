@@ -1,0 +1,3 @@
+class Abc {
+  Abc();
+}

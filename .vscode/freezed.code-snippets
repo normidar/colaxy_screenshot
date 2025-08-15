@@ -1,0 +1,35 @@
+{
+  "New Freezed File": {
+    "scope": "dart",
+    "prefix": "frz",
+    "description": "Creates a new freezed",
+    "body": [
+      "import 'package:freezed_annotation/freezed_annotation.dart';",
+      "",
+      "part '$1.freezed.dart';",
+      "part '$1.g.dart';",
+      "",
+      "@freezed",
+      "abstract class ${1/(.*)/${1:/pascalcase}/} with _$${1/(.*)/${1:/pascalcase}/} {",
+      "\tfactory ${1/(.*)/${1:/pascalcase}/}({$2}) = _${1/(.*)/${1:/pascalcase}/};",
+      "",
+      "\tfactory ${1/(.*)/${1:/pascalcase}/}.fromJson(Map<String, dynamic> json) => _$${1/(.*)/${1:/pascalcase}/}FromJson(json);",
+      "const ${1/(.*)/${1:/pascalcase}/}._();",
+      "}"
+    ]
+  },
+  "New Freezed Class": {
+    "scope": "dart",
+    "prefix": "frzc",
+    "description": "Creates a new freezed class",
+    "body": [
+      "@freezed",
+      "abstract class $1 with _$$1 {",
+      "\tfactory $1({$2}) = _$1;",
+      "",
+      "\tfactory $1.fromJson(Map<String, dynamic> json) => _$$1FromJson(json);",
+      "const $1._();",
+      "}"
+    ]
+  }
+}

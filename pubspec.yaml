@@ -1,0 +1,24 @@
+---
+dependencies:
+  flutter:
+    sdk: flutter
+description: A Flutter package template.
+dev_dependencies:
+  auto_exporter: ^4.0.0
+  build_runner: ^2.6.0
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: any
+environment:
+  flutter: '>=1.17.0'
+  sdk: ^3.0.0
+homepage: https://github.com/normidar/flutter_pkg_temp
+name: flutter_pkg_temp
+topics:
+  - a
+  - b
+  - c
+  - d
+  - e
+version: 0.0.1
