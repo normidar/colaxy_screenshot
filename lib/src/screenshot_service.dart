@@ -180,6 +180,7 @@ class ScreenshotService {
         final iOSLocaleName = _iOSLocaleMap[locale.languageCode] ?? 'en-US';
         final iphonePath =
             '$appPath/fastlane/screenshots/$iOSLocaleName/${index}_iphone65_$index.$screenshotData.png';
+        print('iphonePath: $iphonePath');
         File(iphonePath).writeAsBytesSync(imageBytes);
       case ScreenshotMode.tablet:
     }
