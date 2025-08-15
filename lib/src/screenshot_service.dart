@@ -21,42 +21,23 @@ class ScreenshotService {
 
   /// スクリーンショットを実行する
   Future<void> executeScreenshots() async {
-    final results = <String, List<ScreenshotResult>>{};
+    // 各デバイス × 各言語 × 各ページの組み合わせでスクリーンショットを作成
+    for (final mode in ScreenshotModeInfo.all) {
+      mode.setWindowToSize();
+      for (final locale in config.supportedLocales) {
+        for (final page in config.pages) {
+          // スクリーンショットするインデックスに含まれていない場合はスキップ
+          if (!config.indexToScreenshot.contains(page.index)) {
+            continue;
+          }
 
-    // 各言語 × 各ページの組み合わせでスクリーンショットを作成
-    for (final locale in config.supportedLocales) {
-      final pageResults = <ScreenshotResult>[];
-      results[locale.languageCode] = pageResults;
-      for (final page in config.pages) {
-        // スクリーンショットするインデックスに含まれていない場合はスキップ
-        if (!config.indexToScreenshot.contains(page.index)) {
-          continue;
-        }
-
-        try {
-          final result = await _capturePageScreenshot(
+          await _capturePageScreenshot(
             locale: locale,
             page: page,
-          );
-          pageResults.add(result);
-          // TODO: セーフ処理
-
-          // アップロード間の待機
-          await Future<void>.delayed(config.uploadDelay);
-        } catch (e) {
-          pageResults.add(
-            ScreenshotResult(
-              pageName: page.name,
-              locale: locale,
-              error: e.toString(),
-            ),
           );
         }
       }
     }
-
-    // 結果画面を表示
-    _showResultPage(results: results, config: config);
   }
 
   /// 言語設定を含むアプリウィジェットを構築
@@ -154,7 +135,7 @@ class ScreenshotService {
   }
 
   /// 単一ページのスクリーンショットを撮影してアップロード
-  Future<ScreenshotResult> _capturePageScreenshot({
+  Future<void> _capturePageScreenshot({
     required Locale locale,
     required ScreenshotPageInfo page,
   }) async {
@@ -200,11 +181,6 @@ class ScreenshotService {
 
       // imghippoにアップロード
       // TODO: セーフ処理
-
-      return ScreenshotResult(
-        pageName: page.name,
-        locale: locale,
-      );
     } finally {
       // 一時ファイルを削除
       if (imagePath.existsSync()) {
@@ -258,30 +234,6 @@ class ScreenshotService {
         bottom: 10,
       ),
       pixelRatio: 3,
-    );
-  }
-
-  /// 結果画面を表示
-  void _showResultPage({
-    required Map<String, List<ScreenshotResult>> results,
-    required ScreenshotConfig config,
-  }) {
-    const locale = Locale('ja', 'JP');
-    runApp(
-      ProviderScope(
-        child: EasyLocalization(
-          supportedLocales: const [
-            Locale('ja', 'JP'),
-            Locale('en', 'US'),
-            Locale('zh', 'CN'),
-          ],
-          path: 'assets/translations',
-          fallbackLocale: locale,
-          child: config.wrapFunction(
-            ScreenshotResultPage(results: results),
-          ),
-        ),
-      ),
     );
   }
 }
