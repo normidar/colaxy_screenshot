@@ -11,8 +11,7 @@ class ScreenshotConfig {
     required this.wrapFunction,
     required this.overrides,
     required this.indexToScreenshot,
-    this.captureDelay = const Duration(seconds: 3),
-    this.uploadDelay = const Duration(seconds: 1),
+    this.captureDelay = const Duration(milliseconds: 500),
     this.backgroundColor = const Color(0xFF1E1E1E),
     this.titleStyle,
   });
@@ -35,9 +34,6 @@ class ScreenshotConfig {
 
   /// スクリーンショット間の待機時間（デフォルト3秒）
   final Duration captureDelay;
-
-  /// アップロード時の待機時間（デフォルト1秒）
-  final Duration uploadDelay;
 
   /// 背景色（デフォルトはダークグレー）
   final Color backgroundColor;
