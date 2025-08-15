@@ -183,10 +183,11 @@ class ScreenshotService {
     switch (modeInfo.mode) {
       case ScreenshotMode.phone:
         final iOSLocaleName = _iOSLocaleMap[locale.languageCode] ?? 'en-US';
-        final iphonePath =
-            '$appPath/fastlane/screenshots/$iOSLocaleName/${index}_iphone65_$index.$screenshotData.png';
+        final iphonePath = '$appPath/fastlane/screenshots/$iOSLocaleName';
+        Directory(iphonePath).createSync(recursive: true);
         print('iphonePath: $iphonePath');
-        File(iphonePath).writeAsBytesSync(imageBytes);
+        File('$iphonePath/${index}_iphone65_$index.$screenshotData.png')
+            .writeAsBytesSync(imageBytes);
       case ScreenshotMode.tablet:
     }
   }
