@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:coglax_screenshot/coglax_screenshot.dart';
-import 'package:coglax_screenshot/src/types/screenshot_page_info.dart';
 import 'package:device_frame_plus/device_frame_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -127,7 +126,7 @@ class ScreenshotService {
             Padding(
               padding: const EdgeInsets.fromLTRB(40, 80, 40, 20),
               child: Text(
-                page.titleTextKey.tr(),
+                page.titleText,
                 style: const TextStyle(
                   color: ui.Color.fromARGB(255, 25, 178, 255),
                   fontSize: 48,
