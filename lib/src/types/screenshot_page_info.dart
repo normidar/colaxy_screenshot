@@ -7,7 +7,7 @@ class ScreenshotPageInfo {
     required this.name,
     required this.index,
     required this.widget,
-    required this.titleText,
+    required this.titleTextKey,
     this.overrides,
     this.titleStyle,
     this.backgroundColor,
@@ -24,7 +24,7 @@ class ScreenshotPageInfo {
   final List<Override>? overrides;
 
   /// ページ固有のタイトルテキスト（nullの場合はConfigの設定を使用）
-  final String titleText;
+  final String titleTextKey;
 
   /// ページ固有のタイトルスタイル（nullの場合はConfigの設定を使用）
   final TextStyle? titleStyle;

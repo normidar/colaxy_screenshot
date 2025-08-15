@@ -107,7 +107,7 @@ class ScreenshotService {
             Padding(
               padding: const EdgeInsets.fromLTRB(40, 80, 40, 20),
               child: Text(
-                page.titleText,
+                page.titleTextKey.tr(),
                 style: const TextStyle(
                   color: ui.Color.fromARGB(255, 25, 178, 255),
                   fontSize: 48,
