@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:coglax_screenshot/coglax_screenshot.dart';
+import 'package:coglax_screenshot/src/types/screenshot_page_info.dart';
 import 'package:device_frame_plus/device_frame_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -62,7 +63,7 @@ class ScreenshotService {
   /// 言語設定を含むアプリウィジェットを構築
   Widget _buildAppWithLocale({
     required Locale locale,
-    required ScreenshotPage page,
+    required ScreenshotPageInfo page,
     required DeviceInfo deviceFrame,
   }) {
     _appKey = GlobalKey();
@@ -113,7 +114,7 @@ class ScreenshotService {
   }
 
   /// マーケティング用のレイアウトを構築（背景 + タイトル + デバイスフレーム）
-  Widget _buildMarketingLayout(Widget deviceFrame, ScreenshotPage page) {
+  Widget _buildMarketingLayout(Widget deviceFrame, ScreenshotPageInfo page) {
     return Directionality(
       textDirection: ui.TextDirection.ltr,
       child: Container(
@@ -156,7 +157,7 @@ class ScreenshotService {
   /// 単一ページのスクリーンショットを撮影してアップロード
   Future<ScreenshotResult> _capturePageScreenshot({
     required Locale locale,
-    required ScreenshotPage page,
+    required ScreenshotPageInfo page,
   }) async {
     // 一時ファイルに保存
     final directory = await path_provider.getTemporaryDirectory();
