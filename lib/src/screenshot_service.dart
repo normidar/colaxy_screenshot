@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 
 import 'package:coglax_screenshot/coglax_screenshot.dart';
 import 'package:device_frame_plus/device_frame_plus.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -34,6 +33,7 @@ class ScreenshotService {
           await _capturePageScreenshot(
             locale: locale,
             page: page,
+            deviceFrame: mode.toDeviceInfo(),
           );
         }
       }
@@ -138,6 +138,7 @@ class ScreenshotService {
   Future<void> _capturePageScreenshot({
     required Locale locale,
     required ScreenshotPageInfo page,
+    required DeviceInfo deviceFrame,
   }) async {
     // 一時ファイルに保存
     final directory = await path_provider.getTemporaryDirectory();
@@ -145,9 +146,6 @@ class ScreenshotService {
     final imagePath = await File('${directory.path}/$fileName').create();
 
     try {
-      // デバイスフレームを取得
-      final deviceFrame = await _getDeviceFrame();
-
       // runAppでアプリを起動
       final app = _buildAppWithLocale(
         locale: locale,
@@ -187,53 +185,5 @@ class ScreenshotService {
         await imagePath.delete();
       }
     }
-  }
-
-  /// 現在のデバイスに応じたデバイスフレームを取得
-  Future<DeviceInfo> _getDeviceFrame() async {
-    final deviceInfo = DeviceInfoPlugin();
-
-    if (Platform.isIOS) {
-      final iosInfo = await deviceInfo.iosInfo;
-      final model = iosInfo.model.toLowerCase();
-
-      // iPadの判定
-      if (model.contains('ipad')) {
-        return DeviceInfo.genericTablet(
-          platform: TargetPlatform.iOS,
-          id: 'ipad_pro_11',
-          name: 'iPad Pro 11"',
-          screenSize: const Size(834, 1194),
-          safeAreas: const EdgeInsets.only(
-            top: 20,
-            bottom: 20,
-          ),
-          rotatedSafeAreas: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: 20,
-          ),
-        );
-      }
-    }
-
-    // デフォルトはiPhone（従来の設定）
-    return DeviceInfo.genericPhone(
-      platform: TargetPlatform.iOS,
-      id: 'iphone_13',
-      name: 'iPhone 13',
-      screenSize: const Size(390, 844),
-      safeAreas: const EdgeInsets.only(
-        top: 10,
-        bottom: 10,
-      ),
-      rotatedSafeAreas: const EdgeInsets.only(
-        left: 10,
-        right: 10,
-        bottom: 10,
-      ),
-      pixelRatio: 3,
-    );
   }
 }
