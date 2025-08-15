@@ -8,13 +8,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart' as path_provider;
+
+/// Android用のロケールマッピング
+const _androidLocaleMap = {'en': 'en-US', 'ja': 'ja-JP', 'zh': 'zh-CN'};
+
+/// iOS用のロケールマッピング
+const _iOSLocaleMap = {'en': 'en-US', 'ja': 'ja', 'zh': 'zh-Hans'};
 
 /// メインのスクリーンショットサービス
 class ScreenshotService {
-  ScreenshotService(this.config);
+  ScreenshotService({required this.config, required this.appPath});
 
   final ScreenshotConfig config;
+
+  final String appPath;
 
   GlobalKey? _appKey;
 
@@ -33,7 +40,7 @@ class ScreenshotService {
           await _capturePageScreenshot(
             locale: locale,
             page: page,
-            deviceFrame: mode.toDeviceInfo(),
+            modeInfo: mode,
           );
         }
       }
@@ -44,7 +51,7 @@ class ScreenshotService {
   Widget _buildAppWithLocale({
     required Locale locale,
     required ScreenshotPageInfo page,
-    required DeviceInfo deviceFrame,
+    required ScreenshotModeInfo modeInfo,
   }) {
     _appKey = GlobalKey();
 
@@ -74,7 +81,7 @@ class ScreenshotService {
                   Directionality(
                     textDirection: ui.TextDirection.ltr,
                     child: DeviceFrame(
-                      device: deviceFrame,
+                      device: modeInfo.toDeviceInfo(),
                       screen: page.widget(),
                     ),
                   ),
@@ -138,52 +145,43 @@ class ScreenshotService {
   Future<void> _capturePageScreenshot({
     required Locale locale,
     required ScreenshotPageInfo page,
-    required DeviceInfo deviceFrame,
+    required ScreenshotModeInfo modeInfo,
   }) async {
-    // 一時ファイルに保存
-    final directory = await path_provider.getTemporaryDirectory();
-    final fileName = '${page.name}_$locale.png';
-    final imagePath = await File('${directory.path}/$fileName').create();
+    // runAppでアプリを起動
+    final app =
+        _buildAppWithLocale(locale: locale, page: page, modeInfo: modeInfo);
+    runApp(app);
 
-    try {
-      // runAppでアプリを起動
-      final app = _buildAppWithLocale(
-        locale: locale,
-        page: page,
-        deviceFrame: deviceFrame,
-      );
-      runApp(app);
+    // アプリが完全に描画されるまで待機
+    await Future<void>.delayed(config.captureDelay);
 
-      // アプリが完全に描画されるまで待機
-      await Future<void>.delayed(config.captureDelay);
+    // フレームのコールバックを待機して描画が完了することを確認
+    await WidgetsBinding.instance.endOfFrame;
 
-      // フレームのコールバックを待機して描画が完了することを確認
-      await WidgetsBinding.instance.endOfFrame;
+    // RepaintBoundaryからスクリーンショットを取得
+    Uint8List? imageBytes;
+    final currentContext = _appKey?.currentContext;
+    if (currentContext != null && currentContext.mounted) {
+      final boundary =
+          currentContext.findRenderObject()! as RenderRepaintBoundary;
+      final image = await boundary.toImage(pixelRatio: 3);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      imageBytes = byteData?.buffer.asUint8List();
+    }
 
-      // RepaintBoundaryからスクリーンショットを取得
-      Uint8List? imageBytes;
-      final currentContext = _appKey?.currentContext;
-      if (currentContext != null && currentContext.mounted) {
-        final boundary =
-            currentContext.findRenderObject()! as RenderRepaintBoundary;
-        final image = await boundary.toImage(pixelRatio: 3);
-        final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-        imageBytes = byteData?.buffer.asUint8List();
-      }
-
-      if (imageBytes == null) {
-        throw Exception('スクリーンショットの撮影に失敗しました');
-      }
-
-      await imagePath.writeAsBytes(imageBytes);
-
-      // imghippoにアップロード
-      // TODO: セーフ処理
-    } finally {
-      // 一時ファイルを削除
-      if (imagePath.existsSync()) {
-        await imagePath.delete();
-      }
+    if (imageBytes == null) {
+      throw Exception('スクリーンショットの撮影に失敗しました');
+    }
+    // TODO: セーフ処理
+    final index = page.index;
+    final screenshotData = page.name;
+    switch (modeInfo.mode) {
+      case ScreenshotMode.phone:
+        final iOSLocaleName = _iOSLocaleMap[locale.languageCode] ?? 'en-US';
+        final iphonePath =
+            '$appPath/fastlane/screenshots/$iOSLocaleName/${index}_iphone65_$index.$screenshotData.png';
+        File(iphonePath).writeAsBytesSync(imageBytes);
+      case ScreenshotMode.tablet:
     }
   }
 }

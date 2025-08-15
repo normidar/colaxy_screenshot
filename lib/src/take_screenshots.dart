@@ -1,6 +1,11 @@
 import 'package:coglax_screenshot/coglax_screenshot.dart';
+import 'package:flutter/services.dart';
+import 'package:yaml/yaml.dart';
 
 Future<void> takeScreenshots(ScreenshotConfig config) async {
-  final service = ScreenshotService(config);
+  final configString = await rootBundle.loadString('assets/config.yaml');
+  final yamlConfig = loadYaml(configString) as Map<dynamic, dynamic>;
+  final appPath = yamlConfig['app_path'] as String;
+  final service = ScreenshotService(config: config, appPath: appPath);
   await service.executeScreenshots();
 }
