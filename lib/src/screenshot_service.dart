@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:coglax_screenshot/coglax_screenshot.dart';
+import 'package:colaxy_screenshot/colaxy_screenshot.dart';
 import 'package:device_frame_plus/device_frame_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' hide Image;

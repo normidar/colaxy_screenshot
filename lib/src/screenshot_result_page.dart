@@ -1,4 +1,4 @@
-import 'package:coglax_screenshot/src/screenshot_result.dart'
+import 'package:colaxy_screenshot/src/screenshot_result.dart'
     show ScreenshotResult;
 import 'package:flutter/material.dart';
 

@@ -1,4 +1,4 @@
-import 'package:coglax_screenshot/src/types/screenshot_page_info.dart';
+import 'package:colaxy_screenshot/src/types/screenshot_page_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

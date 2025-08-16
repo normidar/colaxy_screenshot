@@ -1,8 +1,8 @@
-# coglax_screenshot
+# colaxy_screenshot
 
-[![GitHub](https://img.shields.io/github/license/normidar/coglax_screenshot.svg)](https://github.com/normidar/coglax_screenshot/blob/main/LICENSE)
-[![pub package](https://img.shields.io/pub/v/coglax_screenshot.svg)](https://pub.dartlang.org/packages/coglax_screenshot)
-[![GitHub Stars](https://img.shields.io/github/stars/normidar/coglax_screenshot.svg)](https://github.com/normidar/coglax_screenshot/stargazers)
+[![GitHub](https://img.shields.io/github/license/normidar/colaxy_screenshot.svg)](https://github.com/normidar/colaxy_screenshot/blob/main/LICENSE)
+[![pub package](https://img.shields.io/pub/v/colaxy_screenshot.svg)](https://pub.dartlang.org/packages/colaxy_screenshot)
+[![GitHub Stars](https://img.shields.io/github/stars/normidar/colaxy_screenshot.svg)](https://github.com/normidar/colaxy_screenshot/stargazers)
 [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/normidar.svg?style=social&label=Follow%20%40normidar)](https://twitter.com/normidar)
 [![Github-sponsors](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors&logoColor=#EA4AAA)](https://github.com/sponsors/normidar)
 
@@ -24,7 +24,7 @@ Add this package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  coglax_screenshot: ^0.0.1
+  colaxy_screenshot: ^0.0.1
 ```
 
 ## Setup
@@ -70,7 +70,7 @@ flutter:
 ### Basic Setup
 
 ```dart
-import 'package:coglax_screenshot/coglax_screenshot.dart';
+import 'package:colaxy_screenshot/colaxy_screenshot.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
