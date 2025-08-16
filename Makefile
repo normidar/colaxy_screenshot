@@ -92,5 +92,11 @@ rename: ## Rename in all files from coglax_screenshot to <new_name>: `make renam
 		git status --porcelain | grep -E "^\s*M" || echo "No files were modified."; \
 	fi
 
+.PHONY: downgrade_check
+downgrade_check: ## Check for package downgrades: `make downgrade_check`
+	fvm dart pub downgrade && \
+	fvm dart analyze . && \
+	fvm dart pub update \
+
 %:
 	@:
