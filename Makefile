@@ -74,23 +74,29 @@ add_dependency: ## Add a dependency to the package: `make add_dependency <depend
 	fi
 
 .PHONY: rename
-rename: ## Rename in all files from flutter_pkg_temp to <new_name>: `make rename <new_name>`
+rename: ## Rename in all files from coglax_screenshot to <new_name>: `make rename <new_name>`
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 		echo "\033[0;31mPlease provide a new name."; \
 		echo "\033[0;33mUsage: make rename <new_name>"; \
 		exit 1; \
 	else \
 		NEW_NAME=$(filter-out $@,$(MAKECMDGOALS)); \
-		echo "\033[0;32mRenaming flutter_pkg_temp to $$NEW_NAME in all files..."; \
-		find . -type f \( -name "*.dart" -o -name "*.yaml" -o -name "*.yml" -o -name "*.md" -o -name "*.json" \) -not -path "./.dart_tool/*" -not -path "./build/*" -not -path "./.git/*" | xargs sed -i '' "s/flutter_pkg_temp/$$NEW_NAME/g"; \
-		echo "\033[0;32mRenaming lib/flutter_pkg_temp.dart to lib/$$NEW_NAME.dart..."; \
-		if [ -f "lib/flutter_pkg_temp.dart" ]; then \
-			mv "lib/flutter_pkg_temp.dart" "lib/$$NEW_NAME.dart"; \
+		echo "\033[0;32mRenaming coglax_screenshot to $$NEW_NAME in all files..."; \
+		find . -type f \( -name "*.dart" -o -name "*.yaml" -o -name "*.yml" -o -name "*.md" -o -name "*.json" \) -not -path "./.dart_tool/*" -not -path "./build/*" -not -path "./.git/*" | xargs sed -i '' "s/coglax_screenshot/$$NEW_NAME/g"; \
+		echo "\033[0;32mRenaming lib/coglax_screenshot.dart to lib/$$NEW_NAME.dart..."; \
+		if [ -f "lib/coglax_screenshot.dart" ]; then \
+			mv "lib/coglax_screenshot.dart" "lib/$$NEW_NAME.dart"; \
 		fi; \
 		echo "\033[0;32mRename completed successfully!"; \
 		echo "\033[0;33mModified files:"; \
 		git status --porcelain | grep -E "^\s*M" || echo "No files were modified."; \
 	fi
+
+.PHONY: downgrade_check
+downgrade_check: ## Check for package downgrades: `make downgrade_check`
+	fvm dart pub downgrade && \
+	fvm dart analyze . && \
+	fvm dart pub update \
 
 %:
 	@:

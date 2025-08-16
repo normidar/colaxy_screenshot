@@ -1,11 +1,20 @@
 ---
 dependencies:
+  device_frame_plus: ^1.0.0
+  device_info_plus: ^11.0.0
+  easy_localization: ^3.0.0
   flutter:
     sdk: flutter
+  flutter_riverpod: ^2.0.0
+  image: ^4.0.0
+  path_provider: ^2.0.0
+  screenshot: ^3.0.0
+  window_size: ^0.1.0
+  yaml: ^3.0.0
 description: A Flutter package template.
 dev_dependencies:
   auto_exporter: ^4.0.0
-  build_runner: ^2.6.0
+  build_runner: ^2.0.0
   flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
@@ -13,12 +22,12 @@ dev_dependencies:
 environment:
   flutter: '>=1.17.0'
   sdk: ^3.0.0
-homepage: https://github.com/normidar/flutter_pkg_temp
-name: flutter_pkg_temp
+homepage: https://github.com/normidar/coglax_screenshot
+name: coglax_screenshot
 topics:
-  - a
-  - b
-  - c
-  - d
-  - e
+  - screenshot
+  - fastlane
+  - automation
+  - image
+  - png
 version: 0.0.1
