@@ -34,12 +34,9 @@ class ScreenshotService {
       mode.setWindowToSize();
       for (final locale in config.supportedLocales) {
         for (final page in config.pages) {
-          // スクリーンショットするインデックスに含まれていない場合はスキップ
-          print('page.index: ${page.index}');
           if (!config.indexToScreenshot.contains(page.index)) {
             continue;
           }
-          print('before capturePageScreenshot');
           await _capturePageScreenshot(
             locale: locale,
             page: page,
@@ -178,14 +175,12 @@ class ScreenshotService {
     }
     final image = decodePng(imageBytes)!;
 
-    // TODO: セーフ処理
     final index = page.index;
     final screenshotData = page.name;
 
     // image resize
     final width = modeInfo.deviceSize.width.toInt();
     final height = modeInfo.deviceSize.height.toInt();
-    print('width: $width, height: $height');
     final resizedImage = copyResize(image, width: width, height: height);
 
     switch (modeInfo.mode) {
