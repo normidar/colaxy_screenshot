@@ -1,4 +1,4 @@
-import 'package:coglax_screenshot/coglax_screenshot.dart';
+import 'package:colaxy_screenshot/colaxy_screenshot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:yaml/yaml.dart';

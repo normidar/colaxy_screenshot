@@ -22,12 +22,12 @@ dev_dependencies:
 environment:
   flutter: '>=1.17.0'
   sdk: ^3.0.0
-homepage: https://github.com/normidar/coglax_screenshot
-name: coglax_screenshot
+homepage: https://github.com/normidar/colaxy_screenshot
+name: colaxy_screenshot
 topics:
   - screenshot
   - fastlane
   - automation
   - image
   - png
-version: 0.0.1
+version: 0.0.3
