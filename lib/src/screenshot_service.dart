@@ -182,9 +182,12 @@ class ScreenshotService {
     final index = page.index;
     final screenshotData = page.name;
 
-    final resizedImage = copyResize(image,
-        width: modeInfo.deviceSize.width.toInt(),
-        height: modeInfo.deviceSize.height.toInt());
+    // image resize
+    final width = modeInfo.deviceSize.width.toInt();
+    final height = modeInfo.deviceSize.height.toInt();
+    print('width: $width, height: $height');
+    final resizedImage = copyResize(image, width: width, height: height);
+
     switch (modeInfo.mode) {
       case ScreenshotMode.phone:
         // save to iphone screenshot folder
