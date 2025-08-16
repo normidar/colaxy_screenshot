@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// スクリーンショット用の設定クラス
 class ScreenshotConfig {
-  const ScreenshotConfig({
+  ScreenshotConfig({
     required this.imghippoApiKey,
     required this.supportedLocales,
     required this.pages,
@@ -33,7 +33,7 @@ class ScreenshotConfig {
   final List<ScreenshotPageInfo> pages;
 
   /// スクリーンショット間の待機時間（デフォルト3秒）
-  final Duration captureDelay;
+  Duration captureDelay;
 
   /// 背景色（デフォルトはダークグレー）
   final Color backgroundColor;

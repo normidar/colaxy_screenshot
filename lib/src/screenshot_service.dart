@@ -28,19 +28,8 @@ class ScreenshotService {
 
   /// スクリーンショットを実行する
   Future<void> executeScreenshots() async {
-    runApp(
-      ProviderScope(
-        overrides: [
-          ...config.overrides,
-        ],
-        child: const Scaffold(
-          body: Center(
-            child: Text('Loading...'),
-          ),
-        ),
-      ),
-    );
-    await Future<void>.delayed(config.captureDelay * 3);
+    final defaultDelay = config.captureDelay;
+    var isFirst = true;
     // 各デバイス × 各言語 × 各ページの組み合わせでスクリーンショットを作成
     for (final mode in ScreenshotModeInfo.all) {
       mode.setWindowToSize();
@@ -49,11 +38,16 @@ class ScreenshotService {
           if (!config.indexToScreenshot.contains(page.index)) {
             continue;
           }
+          if (isFirst) {
+            config.captureDelay = const Duration(seconds: 3);
+            isFirst = false;
+          }
           await _capturePageScreenshot(
             locale: locale,
             page: page,
             modeInfo: mode,
           );
+          config.captureDelay = defaultDelay;
         }
       }
     }
