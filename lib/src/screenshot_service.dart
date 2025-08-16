@@ -28,7 +28,19 @@ class ScreenshotService {
 
   /// スクリーンショットを実行する
   Future<void> executeScreenshots() async {
-    debugPrint('executeScreenshots');
+    runApp(
+      ProviderScope(
+        overrides: [
+          ...config.overrides,
+        ],
+        child: const Scaffold(
+          body: Center(
+            child: Text('Loading...'),
+          ),
+        ),
+      ),
+    );
+    await Future<void>.delayed(config.captureDelay * 3);
     // 各デバイス × 各言語 × 各ページの組み合わせでスクリーンショットを作成
     for (final mode in ScreenshotModeInfo.all) {
       mode.setWindowToSize();
