@@ -4,10 +4,11 @@ import 'dart:ui' as ui;
 import 'package:coglax_screenshot/coglax_screenshot.dart';
 import 'package:device_frame_plus/device_frame_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image/image.dart';
 
 /// Android用のロケールマッピング
 const _androidLocaleMap = {'en': 'en-US', 'ja': 'ja-JP', 'zh': 'zh-CN'};
@@ -153,9 +154,7 @@ class ScreenshotService {
     final app =
         _buildAppWithLocale(locale: locale, page: page, modeInfo: modeInfo);
 
-    print('before runApp');
     runApp(app);
-    print('after runApp');
 
     // アプリが完全に描画されるまで待機
     await Future<void>.delayed(config.captureDelay);
@@ -177,17 +176,22 @@ class ScreenshotService {
     if (imageBytes == null) {
       throw Exception('スクリーンショットの撮影に失敗しました');
     }
+    final image = decodePng(imageBytes)!;
+
     // TODO: セーフ処理
     final index = page.index;
     final screenshotData = page.name;
     switch (modeInfo.mode) {
       case ScreenshotMode.phone:
+        final resizedImage = copyResize(image,
+            width: modeInfo.deviceSize.width.toInt(),
+            height: modeInfo.deviceSize.height.toInt());
         final iOSLocaleName = _iOSLocaleMap[locale.languageCode] ?? 'en-US';
         final iphonePath = '$appPath/fastlane/screenshots/$iOSLocaleName';
         Directory(iphonePath).createSync(recursive: true);
         print('iphonePath: $iphonePath');
         File('$iphonePath/${index}_iphone65_$index.$screenshotData.png')
-            .writeAsBytesSync(imageBytes);
+            .writeAsBytesSync(encodePng(resizedImage));
       case ScreenshotMode.tablet:
     }
   }
