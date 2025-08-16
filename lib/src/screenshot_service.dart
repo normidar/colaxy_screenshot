@@ -181,18 +181,47 @@ class ScreenshotService {
     // TODO: セーフ処理
     final index = page.index;
     final screenshotData = page.name;
+
+    final resizedImage = copyResize(image,
+        width: modeInfo.deviceSize.width.toInt(),
+        height: modeInfo.deviceSize.height.toInt());
     switch (modeInfo.mode) {
       case ScreenshotMode.phone:
-        final resizedImage = copyResize(image,
-            width: modeInfo.deviceSize.width.toInt(),
-            height: modeInfo.deviceSize.height.toInt());
-        final iOSLocaleName = _iOSLocaleMap[locale.languageCode] ?? 'en-US';
+        // save to iphone screenshot folder
+        final iOSLocaleName = _iOSLocaleMap[locale.languageCode]!;
         final iphonePath = '$appPath/fastlane/screenshots/$iOSLocaleName';
         Directory(iphonePath).createSync(recursive: true);
-        print('iphonePath: $iphonePath');
         File('$iphonePath/${index}_iphone65_$index.$screenshotData.png')
             .writeAsBytesSync(encodePng(resizedImage));
+
+        // save to android screenshot folder
+        final androidLocaleName = _androidLocaleMap[locale.languageCode]!;
+        final androidPhonePath =
+            '$appPath/fastlane/metadata/android/$androidLocaleName/images/phoneScreenshots';
+        final androidSevenInchPath =
+            '$appPath/fastlane/metadata/android/$androidLocaleName/images/sevenInchScreenshots';
+        Directory(androidPhonePath).createSync(recursive: true);
+        Directory(androidSevenInchPath).createSync(recursive: true);
+        File('$androidPhonePath/${index}_$androidLocaleName.png')
+            .writeAsBytesSync(encodePng(resizedImage));
+        File('$androidSevenInchPath/${index}_$androidLocaleName.png')
+            .writeAsBytesSync(encodePng(resizedImage));
+
       case ScreenshotMode.tablet:
+        // save to ipad screenshot folder
+        final iOSLocaleName = _iOSLocaleMap[locale.languageCode]!;
+        final ipadPath = '$appPath/fastlane/screenshots/$iOSLocaleName';
+        Directory(ipadPath).createSync(recursive: true);
+        File('$ipadPath/${index}_ipadPro129_$index.$screenshotData.png')
+            .writeAsBytesSync(encodePng(resizedImage));
+
+        // save to android tablet screenshot folder
+        final androidLocaleName = _androidLocaleMap[locale.languageCode]!;
+        final androidTenInchPath =
+            '$appPath/fastlane/metadata/android/$androidLocaleName/images/tenInchScreenshots';
+        Directory(androidTenInchPath).createSync(recursive: true);
+        File('$androidTenInchPath/${index}_$androidLocaleName.png')
+            .writeAsBytesSync(encodePng(resizedImage));
     }
   }
 }
