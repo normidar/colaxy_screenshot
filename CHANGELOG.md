@@ -1,3 +1,7 @@
+## 0.1.0
+
+- Remove indexToScreenshot from config.
+
 ## 0.0.3
 
 - Fix First screenshot loading issue.

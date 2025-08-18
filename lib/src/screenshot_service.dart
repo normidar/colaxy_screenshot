@@ -35,9 +35,6 @@ class ScreenshotService {
       mode.setWindowToSize();
       for (final locale in config.supportedLocales) {
         for (final page in config.pages) {
-          if (!config.indexToScreenshot.contains(page.index)) {
-            continue;
-          }
           if (isFirst) {
             config.captureDelay = const Duration(seconds: 3);
             isFirst = false;
