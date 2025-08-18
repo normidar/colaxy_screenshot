@@ -20,11 +20,10 @@ A powerful Flutter package for automated screenshot generation for App Store and
 
 ## Installation
 
-Add this package to your `pubspec.yaml`:
+Run the following command:
 
-```yaml
-dependencies:
-  colaxy_screenshot: ^0.0.1
+```sh
+flutter pub add colaxy_screenshot
 ```
 
 ## Setup
@@ -104,7 +103,6 @@ void main() async {
         theme: ThemeData.light(),
       ),
       overrides: [], // Riverpod overrides if needed
-      indexToScreenshot: [1, 2], // Which pages to screenshot
     ));
     return;
   }
@@ -187,7 +185,6 @@ your_app/
 | `pages`             | List<ScreenshotPageInfo> | Pages to screenshot                        |
 | `wrapFunction`      | Widget Function(Widget)  | Wrapper function for your app              |
 | `overrides`         | List<Override>           | Global Riverpod overrides                  |
-| `indexToScreenshot` | List<int>                | Which page indices to screenshot           |
 | `captureDelay`      | Duration                 | Delay between screenshots (default: 500ms) |
 | `backgroundColor`   | Color                    | Background color (default: dark gray)      |
 | `titleStyle`        | TextStyle?               | Global title text style                    |
