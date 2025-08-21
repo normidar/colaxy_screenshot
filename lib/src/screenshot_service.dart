@@ -179,7 +179,7 @@ class ScreenshotService {
     final image = decodePng(imageBytes)!;
 
     final index = page.index;
-    final screenshotData = page.name;
+    final screenshotId = page.name;
 
     // image resize
     final width = modeInfo.deviceSize.width.toInt();
@@ -192,7 +192,15 @@ class ScreenshotService {
         final iOSLocaleName = _iOSLocaleMap[locale.languageCode]!;
         final iphonePath = '$appPath/fastlane/screenshots/$iOSLocaleName';
         Directory(iphonePath).createSync(recursive: true);
-        File('$iphonePath/${index}_iphone65_$index.$screenshotData.png')
+
+        // Delete existing files with pattern ${index}_iphone65_$index.*.png
+        _deleteExistingScreenshots(
+          directoryPath: iphonePath,
+          deviceName: 'iphone65',
+          index: index,
+        );
+
+        File('$iphonePath/${index}_iphone65_$index.$screenshotId.png')
             .writeAsBytesSync(encodePng(resizedImage));
 
         // save to android screenshot folder
@@ -213,7 +221,15 @@ class ScreenshotService {
         final iOSLocaleName = _iOSLocaleMap[locale.languageCode]!;
         final ipadPath = '$appPath/fastlane/screenshots/$iOSLocaleName';
         Directory(ipadPath).createSync(recursive: true);
-        File('$ipadPath/${index}_ipadPro129_$index.$screenshotData.png')
+
+        // Delete existing files with pattern ${index}_ipadPro129_$index.*.png
+        _deleteExistingScreenshots(
+          directoryPath: ipadPath,
+          deviceName: 'ipadPro129',
+          index: index,
+        );
+
+        File('$ipadPath/${index}_ipadPro129_$index.$screenshotId.png')
             .writeAsBytesSync(encodePng(resizedImage));
 
         // save to android tablet screenshot folder
@@ -223,6 +239,34 @@ class ScreenshotService {
         Directory(androidTenInchPath).createSync(recursive: true);
         File('$androidTenInchPath/${index}_$androidLocaleName.png')
             .writeAsBytesSync(encodePng(resizedImage));
+    }
+  }
+
+  /// 既存のiPhoneスクリーンショットファイルを削除する
+  /// パターン: ${index}_iphone65_$index.*.png
+  void _deleteExistingScreenshots({
+    required String directoryPath,
+    required String deviceName,
+    required int index,
+  }) {
+    final directory = Directory(directoryPath);
+    if (!directory.existsSync()) return;
+
+    // パターンに一致するファイルを検索して削除
+    final pattern = RegExp('^${index}_${deviceName}_$index' r'\..*\.png$');
+
+    final files = directory
+        .listSync()
+        .whereType<File>()
+        .where((file) => pattern.hasMatch(file.uri.pathSegments.last));
+
+    for (final file in files) {
+      try {
+        file.deleteSync();
+        print('削除しました: ${file.path}');
+      } catch (e) {
+        print('ファイル削除に失敗しました: ${file.path}, エラー: $e');
+      }
     }
   }
 }
