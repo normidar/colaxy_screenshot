@@ -10,13 +10,10 @@ class ScreenshotConfig {
     required this.pages,
     required this.wrapFunction,
     required this.overrides,
-    required this.indexToScreenshot,
     this.captureDelay = const Duration(milliseconds: 500),
     this.backgroundColor = const Color(0xFF1E1E1E),
     this.titleStyle,
   });
-
-  final List<int> indexToScreenshot;
 
   /// APIキー
   final String imghippoApiKey;
