@@ -11,10 +11,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image/image.dart';
 
 /// Android用のロケールマッピング
-const _androidLocaleMap = {'en': 'en-US', 'ja': 'ja-JP', 'zh': 'zh-CN'};
+const _androidLocaleMap = {
+  'en': 'en-US',
+  'ja': 'ja-JP',
+  'zh': 'zh-CN',
+  'es': 'es-ES',
+  'pt': 'pt-PT',
+  'tr': 'tr-TR',
+};
 
 /// iOS用のロケールマッピング
-const _iOSLocaleMap = {'en': 'en-US', 'ja': 'ja', 'zh': 'zh-Hans'};
+const _iOSLocaleMap = {
+  'en': 'en-US',
+  'ja': 'ja',
+  'zh': 'zh-Hans',
+  'es': 'es-ES',
+  'pt': 'pt-PT',
+  'tr': 'tr',
+};
 
 /// メインのスクリーンショットサービス
 class ScreenshotService {
@@ -68,8 +82,11 @@ class ScreenshotService {
           Locale('ja', 'JP'),
           Locale('en', 'US'),
           Locale('zh', 'CN'),
+          Locale('es', 'ES'),
+          Locale('pt', 'PT'),
+          Locale('tr', 'TR'),
         ],
-        path: 'assets/translations',
+        path: 'assets/localizations',
         fallbackLocale: const Locale('en', 'US'),
         child: Builder(
           builder: (context) {

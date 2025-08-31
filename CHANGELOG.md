@@ -1,3 +1,7 @@
+## 0.2.0
+
+- Add support for Spanish, Portuguese, and Turkish.
+
 ## 0.1.1
 
 - Add screenshotId to screenshot file name.
