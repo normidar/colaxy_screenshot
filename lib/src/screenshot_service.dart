@@ -77,18 +77,8 @@ class ScreenshotService {
         ...config.overrides,
         ...page.overrides ?? [],
       ],
-      child: EasyLocalization(
-        supportedLocales: const [
-          Locale('ja', 'JP'),
-          Locale('en', 'US'),
-          Locale('zh', 'CN'),
-          Locale('es', 'ES'),
-          Locale('pt', 'PT'),
-          Locale('tr', 'TR'),
-        ],
-        path: 'assets/localizations',
-        fallbackLocale: const Locale('en', 'US'),
-        child: Builder(
+      child: config.easyLocalizationWrapper(
+        Builder(
           builder: (context) {
             return FutureBuilder(
               future: () async {
