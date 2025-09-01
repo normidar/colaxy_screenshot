@@ -1,3 +1,7 @@
+## 0.3.0
+
+- Add easyLocalizationWrapper to config.
+
 ## 0.2.0
 
 - Add support for Spanish, Portuguese, and Turkish.

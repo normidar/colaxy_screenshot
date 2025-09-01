@@ -3,6 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+typedef EasyLocalizationWrapper = EasyLocalization Function(Widget);
+
 /// スクリーンショット用の設定クラス
 class ScreenshotConfig {
   ScreenshotConfig({
@@ -22,7 +24,7 @@ class ScreenshotConfig {
 
   final List<Override> overrides;
 
-  final EasyLocalization Function(Widget) easyLocalizationWrapper;
+  final EasyLocalizationWrapper easyLocalizationWrapper;
 
   /// スクリーンショットするページのラッパー関数
   final Widget Function(Widget) wrapFunction;
