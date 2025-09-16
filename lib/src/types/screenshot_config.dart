@@ -8,6 +8,7 @@ typedef EasyLocalizationWrapper = EasyLocalization Function(Widget);
 /// スクリーンショット用の設定クラス
 class ScreenshotConfig {
   ScreenshotConfig({
+    required this.featureGraphicPage,
     required this.imghippoApiKey,
     required this.supportedLocales,
     required this.pages,
@@ -18,6 +19,8 @@ class ScreenshotConfig {
     this.backgroundColor = const Color(0xFF1E1E1E),
     this.titleStyle,
   });
+
+  final Widget featureGraphicPage;
 
   /// APIキー
   final String imghippoApiKey;

@@ -1,14 +1,16 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:colaxy_screenshot/colaxy_screenshot.dart';
 import 'package:device_frame_plus/device_frame_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart' hide Image;
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image/image.dart';
+import 'package:image/image.dart' hide Image;
+import 'package:window_size/window_size.dart';
 
 /// Android用のロケールマッピング
 const _androidLocaleMap = {
@@ -42,26 +44,97 @@ class ScreenshotService {
 
   /// スクリーンショットを実行する
   Future<void> executeScreenshots() async {
-    final defaultDelay = config.captureDelay;
-    var isFirst = true;
-    // 各デバイス × 各言語 × 各ページの組み合わせでスクリーンショットを作成
-    for (final mode in ScreenshotModeInfo.all) {
-      mode.setWindowToSize();
-      for (final locale in config.supportedLocales) {
-        for (final page in config.pages) {
-          if (isFirst) {
-            config.captureDelay = const Duration(seconds: 3);
-            isFirst = false;
-          }
-          await _capturePageScreenshot(
-            locale: locale,
-            page: page,
-            modeInfo: mode,
-          );
-          config.captureDelay = defaultDelay;
-        }
-      }
-    }
+    // set Feature Graphic Page
+    getFeatureGraphicScreenshot();
+
+    // final defaultDelay = config.captureDelay;
+    // var isFirst = true;
+    // // 各デバイス × 各言語 × 各ページの組み合わせでスクリーンショットを作成
+    // for (final mode in ScreenshotModeInfo.all) {
+    //   mode.setWindowToSize();
+    //   for (final locale in config.supportedLocales) {
+    //     for (final page in config.pages) {
+    //       if (isFirst) {
+    //         config.captureDelay = const Duration(seconds: 3);
+    //         isFirst = false;
+    //       }
+    //       await _capturePageScreenshot(
+    //         locale: locale,
+    //         page: page,
+    //         modeInfo: mode,
+    //       );
+    //       config.captureDelay = defaultDelay;
+    //     }
+    //   }
+    // }
+  }
+
+  /// Feature Graphic Page generate
+  void getFeatureGraphicScreenshot() {
+    _appKey = GlobalKey();
+
+    final Widget appWidget = ProviderScope(
+      overrides: config.overrides,
+      child: config.easyLocalizationWrapper(
+        Builder(
+          builder: (context) {
+            return FutureBuilder(
+              future: () async {
+                Intl.defaultLocale = 'en';
+                await context.setLocale(const Locale('en', 'US'));
+                return null;
+              }(),
+              builder: (_, __) => config.wrapFunction(
+                Scaffold(
+                  backgroundColor: Colors.white,
+                  body: Stack(
+                    children: [
+                      Positioned(
+                        top: 0,
+                        left: 200,
+                        child: Transform.rotate(
+                          angle: -math.pi / 6, // 数字が大きければ回転角度が小さくなる
+                          child: Image.asset(
+                            'assets/app_icons/icon.png',
+                            width: 400,
+                            height: 400,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: -50,
+                        right: 200,
+                        child: Transform.rotate(
+                          angle: math.pi / 6, // 数字が大きければ回転角度が小さくなる
+                          child: DeviceFrame(
+                            device: const ScreenshotModeInfo(
+                              mode: ScreenshotMode.phone,
+                              deviceSize: Size(642, 1389),
+                            ).toDeviceInfo(),
+                            screen: config.featureGraphicPage,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+    setWindowToSize(const Size(1024, 500));
+    runApp(appWidget);
+  }
+
+  void setWindowToSize(Size deviceSize) {
+    const rate = 3.3;
+    setWindowMinSize(deviceSize / rate);
+    setWindowMaxSize(deviceSize / rate);
+    setWindowFrame(
+        Rect.fromLTWH(100, 100, deviceSize.width, deviceSize.height));
   }
 
   /// 言語設定を含むアプリウィジェットを構築

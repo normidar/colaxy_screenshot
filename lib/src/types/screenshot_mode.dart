@@ -10,12 +10,17 @@ class ScreenshotModeInfo {
     required this.deviceSize,
   });
 
-  static List<ScreenshotModeInfo> get all => [
-        const ScreenshotModeInfo(
-            mode: ScreenshotMode.phone, deviceSize: Size(1284, 2778)),
-        const ScreenshotModeInfo(
-            mode: ScreenshotMode.tablet, deviceSize: Size(2048, 2732)),
-      ];
+  static ScreenshotModeInfo phone = const ScreenshotModeInfo(
+    mode: ScreenshotMode.phone,
+    deviceSize: Size(1284, 2778),
+  );
+
+  static ScreenshotModeInfo tablet = const ScreenshotModeInfo(
+    mode: ScreenshotMode.tablet,
+    deviceSize: Size(2048, 2732),
+  );
+
+  static List<ScreenshotModeInfo> get all => [phone, tablet];
 
   final ScreenshotMode mode;
 
