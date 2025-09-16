@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image/image.dart' hide Image;
+import 'package:image/image.dart' hide Color, Image;
 import 'package:window_size/window_size.dart';
 
 /// Android用のロケールマッピング
@@ -85,38 +85,50 @@ class ScreenshotService {
                 return null;
               }(),
               builder: (_, __) => config.wrapFunction(
-                Scaffold(
-                  backgroundColor: Colors.white,
-                  body: Stack(
-                    children: [
-                      Positioned(
-                        top: 0,
-                        left: 200,
-                        child: Transform.rotate(
-                          angle: -math.pi / 6, // 数字が大きければ回転角度が小さくなる
-                          child: Image.asset(
-                            'assets/app_icons/icon.png',
-                            width: 400,
-                            height: 400,
-                            fit: BoxFit.cover,
+                Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF8BC34A), // Light Green
+                        Color(0xFF009688), // Teal
+                      ],
+                    ),
+                  ),
+                  child: Scaffold(
+                    backgroundColor: Colors.transparent,
+                    body: Stack(
+                      children: [
+                        Positioned(
+                          top: 0,
+                          left: 200,
+                          child: Transform.rotate(
+                            angle: -math.pi / 6, // 数字が大きければ回転角度が小さくなる
+                            child: Image.asset(
+                              'assets/app_icons/icon.png',
+                              width: 400,
+                              height: 400,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        top: -50,
-                        right: 200,
-                        child: Transform.rotate(
-                          angle: math.pi / 6, // 数字が大きければ回転角度が小さくなる
-                          child: DeviceFrame(
-                            device: const ScreenshotModeInfo(
-                              mode: ScreenshotMode.phone,
-                              deviceSize: Size(642, 1389),
-                            ).toDeviceInfo(),
-                            screen: config.featureGraphicPage,
+                        Positioned(
+                          top: -50,
+                          right: 200,
+                          child: Transform.rotate(
+                            angle: math.pi / 6, // 数字が大きければ回転角度が小さくなる
+                            child: DeviceFrame(
+                              device: const ScreenshotModeInfo(
+                                mode: ScreenshotMode.phone,
+                                deviceSize: Size(642, 1389),
+                              ).toDeviceInfo(),
+                              screen: config.featureGraphicPage,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
