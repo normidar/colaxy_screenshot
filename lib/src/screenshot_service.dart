@@ -45,32 +45,32 @@ class ScreenshotService {
   /// スクリーンショットを実行する
   Future<void> executeScreenshots() async {
     // set Feature Graphic Page
-    getFeatureGraphicScreenshot();
+    await getFeatureGraphicScreenshot();
 
-    // final defaultDelay = config.captureDelay;
-    // var isFirst = true;
-    // // 各デバイス × 各言語 × 各ページの組み合わせでスクリーンショットを作成
-    // for (final mode in ScreenshotModeInfo.all) {
-    //   mode.setWindowToSize();
-    //   for (final locale in config.supportedLocales) {
-    //     for (final page in config.pages) {
-    //       if (isFirst) {
-    //         config.captureDelay = const Duration(seconds: 3);
-    //         isFirst = false;
-    //       }
-    //       await _capturePageScreenshot(
-    //         locale: locale,
-    //         page: page,
-    //         modeInfo: mode,
-    //       );
-    //       config.captureDelay = defaultDelay;
-    //     }
-    //   }
-    // }
+    final defaultDelay = config.captureDelay;
+    var isFirst = true;
+    // 各デバイス × 各言語 × 各ページの組み合わせでスクリーンショットを作成
+    for (final mode in ScreenshotModeInfo.all) {
+      mode.setWindowToSize();
+      for (final locale in config.supportedLocales) {
+        for (final page in config.pages) {
+          if (isFirst) {
+            config.captureDelay = const Duration(seconds: 3);
+            isFirst = false;
+          }
+          await _capturePageScreenshot(
+            locale: locale,
+            page: page,
+            modeInfo: mode,
+          );
+          config.captureDelay = defaultDelay;
+        }
+      }
+    }
   }
 
   /// Feature Graphic Page generate
-  void getFeatureGraphicScreenshot() {
+  Future<void> getFeatureGraphicScreenshot() async {
     _appKey = GlobalKey();
 
     final Widget appWidget = ProviderScope(
@@ -105,11 +105,14 @@ class ScreenshotService {
                           left: 200,
                           child: Transform.rotate(
                             angle: -math.pi / 6, // 数字が大きければ回転角度が小さくなる
-                            child: Image.asset(
-                              'assets/app_icons/icon.png',
-                              width: 400,
-                              height: 400,
-                              fit: BoxFit.cover,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(60),
+                              child: Image.asset(
+                                'assets/app_icons/icon.png',
+                                width: 400,
+                                height: 400,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
@@ -138,7 +141,24 @@ class ScreenshotService {
       ),
     );
     setWindowToSize(const Size(1024, 500));
-    runApp(appWidget);
+    runApp(RepaintBoundary(
+      key: _appKey,
+      child: appWidget,
+    ));
+    await Future<void>.delayed(const Duration(seconds: 3));
+    await WidgetsBinding.instance.endOfFrame;
+    final boundary =
+        _appKey?.currentContext!.findRenderObject() as RenderRepaintBoundary?;
+    final image = await boundary!.toImage(pixelRatio: 3);
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    final imageBytes = byteData?.buffer.asUint8List();
+    if (imageBytes == null) {
+      throw Exception('スクリーンショットの撮影に失敗しました');
+    }
+    final pngImage = decodePng(imageBytes)!;
+    final resizedImage = copyResize(pngImage, width: 1024, height: 500);
+    File('$appPath/fastlane/metadata/android/featureGraphic.png')
+        .writeAsBytesSync(encodePng(resizedImage));
   }
 
   void setWindowToSize(Size deviceSize) {
