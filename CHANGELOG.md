@@ -1,3 +1,7 @@
+## 0.4.0
+
+- Fix some issues.
+
 ## 0.3.0
 
 - Add easyLocalizationWrapper to config.
