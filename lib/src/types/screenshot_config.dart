@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 typedef EasyLocalizationWrapper = EasyLocalization Function(Widget);
 
-/// スクリーンショット用の設定クラス
+/// Configuration class for screenshots
 class ScreenshotConfig {
   ScreenshotConfig({
     required this.featureGraphicPage,
@@ -22,28 +22,28 @@ class ScreenshotConfig {
 
   final Widget featureGraphicPage;
 
-  /// APIキー
+  /// API key
   final String imghippoApiKey;
 
   final List<Override> overrides;
 
   final EasyLocalizationWrapper easyLocalizationWrapper;
 
-  /// スクリーンショットするページのラッパー関数
+  /// Wrapper function for screenshot pages
   final Widget Function(Widget) wrapFunction;
 
-  /// サポートされている言語リスト
+  /// List of supported locales
   final List<Locale> supportedLocales;
 
-  /// スクリーンショットするページのリスト
+  /// List of pages to capture
   final List<ScreenshotPageInfo> pages;
 
-  /// スクリーンショット間の待機時間（デフォルト3秒）
+  /// Delay between screenshots (default 3 seconds)
   Duration captureDelay;
 
-  /// 背景色（デフォルトはダークグレー）
+  /// Background color (default dark gray)
   final Color backgroundColor;
 
-  /// タイトルテキストのスタイル
+  /// Title text style
   final TextStyle? titleStyle;
 }
