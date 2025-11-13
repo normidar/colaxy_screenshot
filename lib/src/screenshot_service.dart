@@ -196,7 +196,9 @@ class ScreenshotService {
                   Directionality(
                     textDirection: ui.TextDirection.ltr,
                     child: DeviceFrame(
-                      device: modeInfo.toDeviceInfo(),
+                      device: modeInfo.mode == ScreenshotMode.phone
+                          ? Devices.ios.iPhone13
+                          : Devices.ios.iPad,
                       screen: page.widget(),
                     ),
                   ),

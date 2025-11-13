@@ -1,7 +1,7 @@
 ---
 dependencies:
   device_frame_plus: ^1.0.0
-  device_info_plus: ^11.0.0
+  device_info_plus: ^12.2.0
   easy_localization: ^3.0.0
   flutter:
     sdk: flutter
@@ -30,4 +30,4 @@ topics:
   - automation
   - image
   - png
-version: 0.4.0
+version: 0.4.1

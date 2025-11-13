@@ -39,8 +39,8 @@ class ScreenshotModeInfo {
       case ScreenshotMode.phone:
         return DeviceInfo.genericPhone(
           platform: TargetPlatform.iOS,
-          id: 'iphone_13',
-          name: 'iPhone 13',
+          id: 'iphone-14-pro',
+          name: 'iPhone 14 Pro',
           screenSize: const Size(390, 844),
           safeAreas: const EdgeInsets.only(
             top: 10,
