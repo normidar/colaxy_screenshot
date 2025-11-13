@@ -1,3 +1,7 @@
+## 0.4.1
+
+- Use real iOS device frames.
+
 ## 0.4.0
 
 - Fix some issues.

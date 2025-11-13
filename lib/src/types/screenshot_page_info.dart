@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// スクリーンショットするページの情報
+/// Information for each page to capture
 class ScreenshotPageInfo {
   const ScreenshotPageInfo({
     required this.name,
@@ -13,22 +13,22 @@ class ScreenshotPageInfo {
     this.backgroundColor,
   });
 
-  /// ページの名前（ファイル名にも使用される）
+  /// Page name (also used for the file name)
   final String name;
 
   final int index;
 
-  /// ページのWidget
+  /// Page widget
   final Widget Function() widget;
 
   final List<Override>? overrides;
 
-  /// ページ固有のタイトルテキスト（nullの場合はConfigの設定を使用）
+  /// Page-specific title text (uses the config when null)
   final String titleTextKey;
 
-  /// ページ固有のタイトルスタイル（nullの場合はConfigの設定を使用）
+  /// Page-specific title style (uses the config when null)
   final TextStyle? titleStyle;
 
-  /// ページ固有の背景色（nullの場合はConfigの設定を使用）
+  /// Page-specific background color (uses the config when null)
   final Color? backgroundColor;
 }

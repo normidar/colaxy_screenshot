@@ -3,7 +3,7 @@
 [![GitHub](https://img.shields.io/github/license/normidar/colaxy_screenshot.svg)](https://github.com/normidar/colaxy_screenshot/blob/main/LICENSE)
 [![pub package](https://img.shields.io/pub/v/colaxy_screenshot.svg)](https://pub.dartlang.org/packages/colaxy_screenshot)
 [![GitHub Stars](https://img.shields.io/github/stars/normidar/colaxy_screenshot.svg)](https://github.com/normidar/colaxy_screenshot/stargazers)
-[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/normidar.svg?style=social&label=Follow%20%40normidar)](https://twitter.com/normidar)
+[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/normidar.svg?style=social&label=Follow%20%40normidar)](https://twitter.com/normidar2)
 [![Github-sponsors](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors&logoColor=#EA4AAA)](https://github.com/sponsors/normidar)
 
 A powerful Flutter package for automated screenshot generation for App Store and Google Play Store listings. Generate beautiful, consistent screenshots across multiple devices, languages, and platforms with ease.

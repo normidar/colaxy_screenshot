@@ -12,7 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image/image.dart' hide Color, Image;
 import 'package:window_size/window_size.dart';
 
-/// Android用のロケールマッピング
+/// Locale mapping for Android
 const _androidLocaleMap = {
   'en': 'en-US',
   'ja': 'ja-JP',
@@ -22,7 +22,7 @@ const _androidLocaleMap = {
   'tr': 'tr-TR',
 };
 
-/// iOS用のロケールマッピング
+/// Locale mapping for iOS
 const _iOSLocaleMap = {
   'en': 'en-US',
   'ja': 'ja',
@@ -32,7 +32,7 @@ const _iOSLocaleMap = {
   'tr': 'tr',
 };
 
-/// メインのスクリーンショットサービス
+/// Main screenshot service
 class ScreenshotService {
   ScreenshotService({required this.config, required this.appPath});
 
@@ -42,14 +42,14 @@ class ScreenshotService {
 
   GlobalKey? _appKey;
 
-  /// スクリーンショットを実行する
+  /// Run the screenshot workflow
   Future<void> executeScreenshots() async {
     // set Feature Graphic Page
     await getFeatureGraphicScreenshot();
 
     final defaultDelay = config.captureDelay;
     var isFirst = true;
-    // 各デバイス × 各言語 × 各ページの組み合わせでスクリーンショットを作成
+    // Capture screenshots for each combination of device, locale, and page
     for (final mode in ScreenshotModeInfo.all) {
       mode.setWindowToSize();
       for (final locale in config.supportedLocales) {
@@ -104,7 +104,8 @@ class ScreenshotService {
                           top: 0,
                           left: 200,
                           child: Transform.rotate(
-                            angle: -math.pi / 6, // 数字が大きければ回転角度が小さくなる
+                            angle: -math.pi /
+                                6, // Larger numbers reduce the rotation angle
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(60),
                               child: Image.asset(
@@ -120,7 +121,8 @@ class ScreenshotService {
                           top: -50,
                           right: 200,
                           child: Transform.rotate(
-                            angle: math.pi / 6, // 数字が大きければ回転角度が小さくなる
+                            angle: math.pi /
+                                6, // Larger numbers reduce the rotation angle
                             child: DeviceFrame(
                               device: const ScreenshotModeInfo(
                                 mode: ScreenshotMode.phone,
@@ -153,7 +155,7 @@ class ScreenshotService {
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     final imageBytes = byteData?.buffer.asUint8List();
     if (imageBytes == null) {
-      throw Exception('スクリーンショットの撮影に失敗しました');
+      throw Exception('Failed to capture the screenshot');
     }
     final pngImage = decodePng(imageBytes)!;
     final resizedImage = copyResize(pngImage, width: 1024, height: 500);
@@ -169,7 +171,7 @@ class ScreenshotService {
         Rect.fromLTWH(100, 100, deviceSize.width, deviceSize.height));
   }
 
-  /// 言語設定を含むアプリウィジェットを構築
+  /// Build the app widget with the given locale
   Widget _buildAppWithLocale({
     required Locale locale,
     required ScreenshotPageInfo page,
@@ -196,7 +198,9 @@ class ScreenshotService {
                   Directionality(
                     textDirection: ui.TextDirection.ltr,
                     child: DeviceFrame(
-                      device: modeInfo.toDeviceInfo(),
+                      device: modeInfo.mode == ScreenshotMode.phone
+                          ? Devices.ios.iPhone13
+                          : Devices.ios.iPad,
                       screen: page.widget(),
                     ),
                   ),
@@ -215,17 +219,17 @@ class ScreenshotService {
     );
   }
 
-  /// マーケティング用のレイアウトを構築（背景 + タイトル + デバイスフレーム）
+  /// Build the marketing layout (background + title + device frame)
   Widget _buildMarketingLayout(Widget deviceFrame, ScreenshotPageInfo page) {
     return Directionality(
       textDirection: ui.TextDirection.ltr,
       child: Container(
-        width: 1080, // 一般的なスクリーンショットサイズ
+        width: 1080, // Standard screenshot size
         height: 1920,
         color: const ui.Color.fromARGB(255, 216, 255, 239),
         child: Column(
           children: [
-            // 上部のタイトルエリア
+            // Title area at the top
             Padding(
               padding: const EdgeInsets.fromLTRB(40, 80, 40, 20),
               child: Text(
@@ -241,14 +245,14 @@ class ScreenshotService {
               ),
             ),
 
-            // デバイスフレーム（中央配置）
+            // Centered device frame
             Expanded(
               child: Center(
                 child: deviceFrame,
               ),
             ),
 
-            // 下部のスペース
+            // Bottom spacing
             const SizedBox(height: 50),
           ],
         ),
@@ -256,25 +260,25 @@ class ScreenshotService {
     );
   }
 
-  /// 単一ページのスクリーンショットを撮影してアップロード
+  /// Capture and upload a screenshot for a single page
   Future<void> _capturePageScreenshot({
     required Locale locale,
     required ScreenshotPageInfo page,
     required ScreenshotModeInfo modeInfo,
   }) async {
-    // runAppでアプリを起動
+    // Launch the app with runApp
     final app =
         _buildAppWithLocale(locale: locale, page: page, modeInfo: modeInfo);
 
     runApp(app);
 
-    // アプリが完全に描画されるまで待機
+    // Wait until the app finishes rendering
     await Future<void>.delayed(config.captureDelay);
 
-    // フレームのコールバックを待機して描画が完了することを確認
+    // Wait for the frame callback to ensure rendering is complete
     await WidgetsBinding.instance.endOfFrame;
 
-    // RepaintBoundaryからスクリーンショットを取得
+    // Retrieve the screenshot from the RepaintBoundary
     Uint8List? imageBytes;
     final currentContext = _appKey?.currentContext;
     if (currentContext != null && currentContext.mounted) {
@@ -286,7 +290,7 @@ class ScreenshotService {
     }
 
     if (imageBytes == null) {
-      throw Exception('スクリーンショットの撮影に失敗しました');
+      throw Exception('Failed to capture the screenshot');
     }
     final image = decodePng(imageBytes)!;
 
@@ -354,8 +358,8 @@ class ScreenshotService {
     }
   }
 
-  /// 既存のiPhoneスクリーンショットファイルを削除する
-  /// パターン: ${index}_iphone65_$index.*.png
+  /// Remove existing iPhone screenshot files
+  /// Pattern: ${index}_iphone65_$index.*.png
   void _deleteExistingScreenshots({
     required String directoryPath,
     required String deviceName,
@@ -364,7 +368,7 @@ class ScreenshotService {
     final directory = Directory(directoryPath);
     if (!directory.existsSync()) return;
 
-    // パターンに一致するファイルを検索して削除
+    // Find and delete files that match the pattern
     final pattern = RegExp('^${index}_${deviceName}_$index' r'\..*\.png$');
 
     final files = directory
@@ -375,9 +379,9 @@ class ScreenshotService {
     for (final file in files) {
       try {
         file.deleteSync();
-        print('削除しました: ${file.path}');
+        print('Deleted: ${file.path}');
       } catch (e) {
-        print('ファイル削除に失敗しました: ${file.path}, エラー: $e');
+        print('Failed to delete file: ${file.path}, Error: $e');
       }
     }
   }
