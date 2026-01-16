@@ -1,3 +1,9 @@
+## 0.6.0
+
+- Remove imghippoApiKey from config.
+- Reset config file after screenshots are taken.
+- Use json format for config file.(config.yaml is deprecated, use config.json instead.)
+
 ## 0.5.0
 
 - Update dependencies.

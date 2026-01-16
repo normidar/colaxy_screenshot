@@ -67,6 +67,9 @@ class ScreenshotService {
         }
       }
     }
+
+    // reset config file
+    await resetJsonConfig();
   }
 
   /// Feature Graphic Page generate

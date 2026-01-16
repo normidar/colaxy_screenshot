@@ -4,3 +4,4 @@ export 'package:colaxy_screenshot/src/take_screenshots.dart';
 export 'package:colaxy_screenshot/src/types/screenshot_config.dart';
 export 'package:colaxy_screenshot/src/types/screenshot_mode.dart';
 export 'package:colaxy_screenshot/src/types/screenshot_page_info.dart';
+export 'package:colaxy_screenshot/src/utils/json_config.dart';
