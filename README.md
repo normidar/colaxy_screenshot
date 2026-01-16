@@ -184,7 +184,7 @@ your_app/
 | `supportedLocales` | List<Locale>             | Languages to generate screenshots for      |
 | `pages`            | List<ScreenshotPageInfo> | Pages to screenshot                        |
 | `wrapFunction`     | Widget Function(Widget)  | Wrapper function for your app              |
-| `overrides`        | List<Override>           | Global Riverpod overrides                  |
+| `overrides`        | List<ProviderOverride>   | Global Riverpod overrides                  |
 | `captureDelay`     | Duration                 | Delay between screenshots (default: 500ms) |
 | `backgroundColor`  | Color                    | Background color (default: dark gray)      |
 | `titleStyle`       | TextStyle?               | Global title text style                    |
