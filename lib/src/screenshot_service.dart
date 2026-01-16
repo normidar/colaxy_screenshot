@@ -72,6 +72,7 @@ class ScreenshotService {
     await resetJsonConfig();
 
     // exit the app
+    debugPrint('Screenshots taken, exiting the app...');
     exit(0);
   }
 
