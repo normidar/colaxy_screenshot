@@ -30,11 +30,13 @@ flutter pub add colaxy_screenshot
 
 ### 1. Add Configuration File
 
-Create `assets/config.yaml` in your project:
+Create `assets/config.json` in your project:
 
-```yaml
-app_path: "/path/to/your/app"
-launch_mode: "screenshot" # Set to "screenshot" to enable screenshot mode
+```json
+{
+  "app_path": "/path/to/your/app",
+  "launch_mode": "screenshot" // Set to "screenshot" to enable screenshot mode
+}
 ```
 
 ### 2. Add Translation Files
@@ -60,7 +62,7 @@ Example `en.json`:
 ```yaml
 flutter:
   assets:
-    - assets/config.yaml
+    - assets/config.json
     - assets/translations/
 ```
 

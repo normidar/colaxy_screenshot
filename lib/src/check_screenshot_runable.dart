@@ -1,8 +1,7 @@
 import 'dart:io';
 
+import 'package:colaxy_screenshot/colaxy_screenshot.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
-import 'package:yaml/yaml.dart';
 
 Future<bool> checkScreenshotRunable() async {
   if (!kDebugMode) {
@@ -13,9 +12,8 @@ Future<bool> checkScreenshotRunable() async {
   }
 
   // get the config.yaml
-  final configString = await rootBundle.loadString('assets/config.yaml');
-  final config = loadYaml(configString) as Map<dynamic, dynamic>;
-  final launchMode = config['launch_mode'] as String?;
+  final config = await getJsonConfig();
+  final launchMode = config['launch_mode'];
   if (launchMode != 'screenshot') {
     return false;
   }
