@@ -16,6 +16,7 @@ Future<void> resetJsonConfig() async {
   final configPath = '${jsonConfig['app_path']!}/assets/config.json';
 
   jsonConfig['launch_mode'] = '_${jsonConfig['launch_mode']}';
-  final jsonString = jsonEncode(jsonConfig);
+  const encoder = JsonEncoder.withIndent('  ');
+  final jsonString = encoder.convert(jsonConfig);
   File(configPath).writeAsStringSync(jsonString);
 }

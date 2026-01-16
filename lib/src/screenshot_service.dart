@@ -70,6 +70,9 @@ class ScreenshotService {
 
     // reset config file
     await resetJsonConfig();
+
+    // exit the app
+    exit(0);
   }
 
   /// Feature Graphic Page generate
