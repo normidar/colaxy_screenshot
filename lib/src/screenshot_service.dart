@@ -67,6 +67,13 @@ class ScreenshotService {
         }
       }
     }
+
+    // reset config file
+    await resetJsonConfig();
+
+    // exit the app
+    debugPrint('Screenshots taken, exiting the app...');
+    exit(0);
   }
 
   /// Feature Graphic Page generate

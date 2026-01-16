@@ -9,7 +9,6 @@ typedef EasyLocalizationWrapper = EasyLocalization Function(Widget);
 class ScreenshotConfig {
   ScreenshotConfig({
     required this.featureGraphicPage,
-    required this.imghippoApiKey,
     required this.supportedLocales,
     required this.pages,
     required this.wrapFunction,
@@ -21,9 +20,6 @@ class ScreenshotConfig {
   });
 
   final Widget featureGraphicPage;
-
-  /// API key
-  final String imghippoApiKey;
 
   final List<Override> overrides;
 
