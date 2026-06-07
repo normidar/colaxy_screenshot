@@ -255,7 +255,15 @@ class ScreenshotService {
           children: [
             // Title area at the top
             Padding(
-              padding: const EdgeInsets.fromLTRB(40, 80, 40, 20),
+              padding: EdgeInsets.fromLTRB(
+                40,
+                switch (modeInfo.mode) {
+                  ScreenshotMode.macos => 40,
+                  _ => 80,
+                },
+                40,
+                20,
+              ),
               child: Text(
                 page.titleTextKey.tr(),
                 style: const TextStyle(
