@@ -2,7 +2,7 @@ import 'package:device_frame_plus/device_frame_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:window_size/window_size.dart';
 
-enum ScreenshotMode { phone, tablet }
+enum ScreenshotMode { phone, tablet, macos }
 
 class ScreenshotModeInfo {
   const ScreenshotModeInfo({
@@ -20,6 +20,11 @@ class ScreenshotModeInfo {
     deviceSize: Size(2048, 2732),
   );
 
+  static ScreenshotModeInfo macos = const ScreenshotModeInfo(
+    mode: ScreenshotMode.macos,
+    deviceSize: Size(2560, 1600),
+  );
+
   static List<ScreenshotModeInfo> get all => [phone, tablet];
 
   final ScreenshotMode mode;
@@ -31,7 +36,8 @@ class ScreenshotModeInfo {
     setWindowMinSize(deviceSize / rate);
     setWindowMaxSize(deviceSize / rate);
     setWindowFrame(
-        Rect.fromLTWH(100, 100, deviceSize.width, deviceSize.height));
+      Rect.fromLTWH(100, 100, deviceSize.width, deviceSize.height),
+    );
   }
 
   DeviceInfo toDeviceInfo() {
@@ -70,6 +76,8 @@ class ScreenshotModeInfo {
             bottom: 20,
           ),
         );
+      case ScreenshotMode.macos:
+        throw UnsupportedError('macOS mode does not use a device frame');
     }
   }
 }

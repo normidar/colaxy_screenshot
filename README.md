@@ -6,13 +6,13 @@
 [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/normidar.svg?style=social&label=Follow%20%40normidar)](https://twitter.com/normidar2)
 [![Github-sponsors](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors&logoColor=#EA4AAA)](https://github.com/sponsors/normidar)
 
-A powerful Flutter package for automated screenshot generation for App Store and Google Play Store listings. Generate beautiful, consistent screenshots across multiple devices, languages, and platforms with ease.
+A powerful Flutter package for automated screenshot generation for App Store, Google Play Store, and Mac App Store listings. Generate beautiful, consistent screenshots across multiple devices, languages, and platforms with ease.
 
 ## Features
 
-✨ **Multi-platform Support**: Generate screenshots for both iOS and Android  
-🌍 **Multi-language Support**: Support for Japanese, English, and Chinese  
-📱 **Device Compatibility**: Phone and tablet screenshot generation  
+✨ **Multi-platform Support**: Generate screenshots for iOS, Android, and macOS  
+🌍 **Multi-language Support**: Support for Japanese, English, Chinese, and more  
+📱 **Device Compatibility**: Phone, tablet, and macOS screenshot generation  
 🎨 **Marketing Layouts**: Beautiful backgrounds and titles for app store listings  
 🚀 **Fastlane Integration**: Direct integration with Fastlane for automated app store uploads  
 ⚙️ **Highly Configurable**: Customizable layouts, delays, and overrides  
@@ -35,7 +35,7 @@ Create `assets/config.json` in your project:
 ```json
 {
   "app_path": "/path/to/your/app",
-  "launch_mode": "screenshot" // Set to "screenshot" to enable screenshot mode
+  "launch_mode": "screenshot"
 }
 ```
 
@@ -77,26 +77,29 @@ import 'package:flutter/material.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Check if screenshot mode is enabled
   if (await checkScreenshotRunable()) {
     await takeScreenshots(ScreenshotConfig(
-      imghippoApiKey: "your-api-key",
+      featureGraphicPage: const MyFeatureGraphicPage(),
+      easyLocalizationWrapper: (child) => EasyLocalization(
+        supportedLocales: const [Locale('en'), Locale('ja')],
+        path: 'assets/translations',
+        child: child,
+      ),
       supportedLocales: const [
         Locale('en', 'US'),
         Locale('ja', 'JP'),
-        Locale('zh', 'CN'),
       ],
       pages: [
         ScreenshotPageInfo(
-          name: "welcome",
+          name: 'welcome',
           index: 1,
-          titleTextKey: "welcome_title",
+          titleTextKey: 'welcome_title',
           widget: () => const WelcomeScreen(),
         ),
         ScreenshotPageInfo(
-          name: "features",
+          name: 'features',
           index: 2,
-          titleTextKey: "features_title",
+          titleTextKey: 'features_title',
           widget: () => const FeaturesScreen(),
         ),
       ],
@@ -109,23 +112,36 @@ void main() async {
     return;
   }
 
-  // Normal app launch
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 ```
+
+### Enabling macOS Screenshots
+
+Set `enableMacos: true` to also generate Mac App Store screenshots (2560×1600):
+
+```dart
+ScreenshotConfig(
+  // ... other config
+  enableMacos: true,
+)
+```
+
+macOS screenshots are saved alongside iOS screenshots under `fastlane/screenshots/` using Fastlane's macOS naming convention.
 
 ### Advanced Configuration
 
 ```dart
 ScreenshotConfig(
   // ... basic config
-  captureDelay: const Duration(milliseconds: 1000), // Wait time between screenshots
-  backgroundColor: const Color(0xFF1E1E1E), // Background color
+  captureDelay: const Duration(milliseconds: 1000),
+  backgroundColor: const Color(0xFF1E1E1E),
   titleStyle: const TextStyle(
     fontSize: 52,
     fontWeight: FontWeight.bold,
     color: Colors.blue,
   ),
+  enableMacos: true,
 )
 ```
 
@@ -133,12 +149,11 @@ ScreenshotConfig(
 
 ```dart
 ScreenshotPageInfo(
-  name: "profile",
+  name: 'profile',
   index: 3,
-  titleTextKey: "profile_title",
+  titleTextKey: 'profile_title',
   widget: () => const ProfileScreen(),
   overrides: [
-    // Riverpod overrides for this specific page
     userProvider.overrideWith((ref) => mockUser),
   ],
   backgroundColor: Colors.purple,
@@ -156,11 +171,13 @@ your_app/
 │   ├── screenshots/
 │   │   ├── en-US/
 │   │   │   ├── 1_iphone65_1.welcome.png
-│   │   │   └── 1_ipadPro129_1.welcome.png
+│   │   │   ├── 1_ipadPro129_1.welcome.png
+│   │   │   └── 1_mac_1.welcome.png        # enableMacos: true のみ
 │   │   ├── ja/
 │   │   └── zh-Hans/
 │   └── metadata/
 │       └── android/
+│           ├── featureGraphic.png
 │           ├── en-US/images/phoneScreenshots/
 │           ├── ja-JP/images/phoneScreenshots/
 │           └── zh-CN/images/phoneScreenshots/
@@ -171,25 +188,31 @@ your_app/
 ### Phone Screenshots
 
 - **iOS**: iPhone 13 (1284×2778)
-- **Android**: Phone screenshots (1284×2778)
+- **Android**: Phone screenshots (1284×2778), 7-inch screenshots (1284×2778)
 
 ### Tablet Screenshots
 
 - **iOS**: iPad Pro 11" (2048×2732)
-- **Android**: 7-inch and 10-inch tablets (2048×2732)
+- **Android**: 10-inch tablet screenshots (2048×2732)
+
+### macOS Screenshots (`enableMacos: true`)
+
+- **Mac**: 2560×1600 (Retina)
 
 ## Configuration Options
 
-| Parameter          | Type                     | Description                                |
-| ------------------ | ------------------------ | ------------------------------------------ |
-| `imghippoApiKey`   | String                   | API key for image uploading service        |
-| `supportedLocales` | List<Locale>             | Languages to generate screenshots for      |
-| `pages`            | List<ScreenshotPageInfo> | Pages to screenshot                        |
-| `wrapFunction`     | Widget Function(Widget)  | Wrapper function for your app              |
-| `overrides`        | List<ProviderOverride>   | Global Riverpod overrides                  |
-| `captureDelay`     | Duration                 | Delay between screenshots (default: 500ms) |
-| `backgroundColor`  | Color                    | Background color (default: dark gray)      |
-| `titleStyle`       | TextStyle?               | Global title text style                    |
+| Parameter                  | Type                     | Required | Description                                      |
+| -------------------------- | ------------------------ | :------: | ------------------------------------------------ |
+| `featureGraphicPage`       | Widget                   | ✓        | Widget used for the Android feature graphic      |
+| `supportedLocales`         | List\<Locale\>           | ✓        | Languages to generate screenshots for            |
+| `pages`                    | List\<ScreenshotPageInfo\> | ✓      | Pages to screenshot                              |
+| `wrapFunction`             | Widget Function(Widget)  | ✓        | Wrapper function for your app (e.g. MaterialApp) |
+| `overrides`                | List\<Override\>         | ✓        | Global Riverpod overrides                        |
+| `easyLocalizationWrapper`  | EasyLocalizationWrapper  | ✓        | EasyLocalization setup function                  |
+| `captureDelay`             | Duration                 |          | Delay between screenshots (default: 500ms)       |
+| `backgroundColor`          | Color                    |          | Background color (default: dark gray)            |
+| `titleStyle`               | TextStyle?               |          | Global title text style                          |
+| `enableMacos`              | bool                     |          | Generate macOS screenshots (default: `false`)    |
 
 ## Requirements
 
@@ -198,41 +221,6 @@ your_app/
 - **Flutter**: >=1.17.0
 - **Dart**: ^3.0.0
 
-## Example Project Structure
-
-```dart
-// screens/welcome_screen.dart
-class WelcomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.star, size: 100, color: Colors.blue),
-            SizedBox(height: 20),
-            Text(
-              'welcome_message'.tr(), // Using easy_localization
-              style: Theme.of(context).textTheme.headlineMedium,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-```
-
-## Tips & Best Practices
-
-1. **Use descriptive page names** for easy identification in app stores
-2. **Test with different locales** to ensure text fits properly
-3. **Use consistent branding** across all screenshots
-4. **Keep titles concise** for better readability
-5. **Test on both orientations** if your app supports rotation
-
 ## Dependencies
 
 This package relies on several key Flutter packages:
@@ -240,8 +228,8 @@ This package relies on several key Flutter packages:
 - `device_frame_plus`: For realistic device frames
 - `easy_localization`: For internationalization
 - `flutter_riverpod`: For state management
-- `screenshot`: For image capture
 - `image`: For image processing
+- `window_size`: For controlling the window dimensions during capture
 
 ## Contributing
 
@@ -255,7 +243,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you find this package helpful, consider:
 
-- ⭐ Starring the repository
-- 🐛 Reporting issues
-- 💡 Suggesting new features
-- ☕ [Sponsoring the developer](https://github.com/sponsors/normidar)
+- Starring the repository
+- Reporting issues
+- Suggesting new features
+- [Sponsoring the developer](https://github.com/sponsors/normidar)

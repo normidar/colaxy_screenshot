@@ -44,13 +44,21 @@ class ScreenshotService {
 
   /// Run the screenshot workflow
   Future<void> executeScreenshots() async {
-    // set Feature Graphic Page
-    await getFeatureGraphicScreenshot();
+    if (config.enableAndroid) {
+      await getFeatureGraphicScreenshot();
+    }
 
     final defaultDelay = config.captureDelay;
     var isFirst = true;
+    final modes = [
+      if (config.enableIos || config.enableAndroid) ...[
+        ScreenshotModeInfo.phone,
+        ScreenshotModeInfo.tablet,
+      ],
+      if (config.enableMacos) ScreenshotModeInfo.macos,
+    ];
     // Capture screenshots for each combination of device, locale, and page
-    for (final mode in ScreenshotModeInfo.all) {
+    for (final mode in modes) {
       mode.setWindowToSize();
       for (final locale in config.supportedLocales) {
         for (final page in config.pages) {
@@ -150,10 +158,12 @@ class ScreenshotService {
       ),
     );
     setWindowToSize(const Size(1024, 500));
-    runApp(RepaintBoundary(
-      key: _appKey,
-      child: appWidget,
-    ));
+    runApp(
+      RepaintBoundary(
+        key: _appKey,
+        child: appWidget,
+      ),
+    );
     await Future<void>.delayed(const Duration(seconds: 3));
     await WidgetsBinding.instance.endOfFrame;
     final boundary =
@@ -175,7 +185,8 @@ class ScreenshotService {
     setWindowMinSize(deviceSize / rate);
     setWindowMaxSize(deviceSize / rate);
     setWindowFrame(
-        Rect.fromLTWH(100, 100, deviceSize.width, deviceSize.height));
+      Rect.fromLTWH(100, 100, deviceSize.width, deviceSize.height),
+    );
   }
 
   /// Build the app widget with the given locale
@@ -200,20 +211,22 @@ class ScreenshotService {
                 await context.setLocale(locale);
                 return null;
               }(),
-              builder: (_, __) => config.wrapFunction(
-                _buildMarketingLayout(
-                  Directionality(
-                    textDirection: ui.TextDirection.ltr,
-                    child: DeviceFrame(
-                      device: modeInfo.mode == ScreenshotMode.phone
-                          ? Devices.ios.iPhone13
-                          : Devices.ios.iPad,
-                      screen: page.widget(),
-                    ),
+              builder: (_, __) {
+                final innerContent = Directionality(
+                  textDirection: ui.TextDirection.ltr,
+                  child: DeviceFrame(
+                    device: switch (modeInfo.mode) {
+                      ScreenshotMode.phone => Devices.ios.iPhone13,
+                      ScreenshotMode.tablet => Devices.ios.iPad,
+                      ScreenshotMode.macos => Devices.macOS.macBookPro,
+                    },
+                    screen: page.widget(),
                   ),
-                  page,
-                ),
-              ),
+                );
+                return config.wrapFunction(
+                  _buildMarketingLayout(innerContent, page, modeInfo),
+                );
+              },
             );
           },
         ),
@@ -227,12 +240,16 @@ class ScreenshotService {
   }
 
   /// Build the marketing layout (background + title + device frame)
-  Widget _buildMarketingLayout(Widget deviceFrame, ScreenshotPageInfo page) {
+  Widget _buildMarketingLayout(
+    Widget deviceFrame,
+    ScreenshotPageInfo page,
+    ScreenshotModeInfo modeInfo,
+  ) {
     return Directionality(
       textDirection: ui.TextDirection.ltr,
       child: Container(
-        width: 1080, // Standard screenshot size
-        height: 1920,
+        width: modeInfo.deviceSize.width,
+        height: modeInfo.deviceSize.height,
         color: const ui.Color.fromARGB(255, 216, 255, 239),
         child: Column(
           children: [
@@ -311,56 +328,67 @@ class ScreenshotService {
 
     switch (modeInfo.mode) {
       case ScreenshotMode.phone:
-        // save to iphone screenshot folder
-        final iOSLocaleName = _iOSLocaleMap[locale.languageCode]!;
-        final iphonePath = '$appPath/fastlane/screenshots/$iOSLocaleName';
-        Directory(iphonePath).createSync(recursive: true);
-
-        // Delete existing files with pattern ${index}_iphone65_$index.*.png
-        _deleteExistingScreenshots(
-          directoryPath: iphonePath,
-          deviceName: 'iphone65',
-          index: index,
-        );
-
-        File('$iphonePath/${index}_iphone65_$index.$screenshotId.png')
-            .writeAsBytesSync(encodePng(resizedImage));
-
-        // save to android screenshot folder
-        final androidLocaleName = _androidLocaleMap[locale.languageCode]!;
-        final androidPhonePath =
-            '$appPath/fastlane/metadata/android/$androidLocaleName/images/phoneScreenshots';
-        final androidSevenInchPath =
-            '$appPath/fastlane/metadata/android/$androidLocaleName/images/sevenInchScreenshots';
-        Directory(androidPhonePath).createSync(recursive: true);
-        Directory(androidSevenInchPath).createSync(recursive: true);
-        File('$androidPhonePath/${index}_$androidLocaleName.png')
-            .writeAsBytesSync(encodePng(resizedImage));
-        File('$androidSevenInchPath/${index}_$androidLocaleName.png')
-            .writeAsBytesSync(encodePng(resizedImage));
+        if (config.enableIos) {
+          final iOSLocaleName = _iOSLocaleMap[locale.languageCode]!;
+          final iphonePath = '$appPath/fastlane/screenshots/$iOSLocaleName';
+          Directory(iphonePath).createSync(recursive: true);
+          _deleteExistingScreenshots(
+            directoryPath: iphonePath,
+            deviceName: 'iphone65',
+            index: index,
+          );
+          File('$iphonePath/${index}_iphone65_$index.$screenshotId.png')
+              .writeAsBytesSync(encodePng(resizedImage));
+        }
+        if (config.enableAndroid) {
+          final androidLocaleName = _androidLocaleMap[locale.languageCode]!;
+          final androidPhonePath =
+              '$appPath/fastlane/metadata/android/$androidLocaleName/images/phoneScreenshots';
+          final androidSevenInchPath =
+              '$appPath/fastlane/metadata/android/$androidLocaleName/images/sevenInchScreenshots';
+          Directory(androidPhonePath).createSync(recursive: true);
+          Directory(androidSevenInchPath).createSync(recursive: true);
+          File('$androidPhonePath/${index}_$androidLocaleName.png')
+              .writeAsBytesSync(encodePng(resizedImage));
+          File('$androidSevenInchPath/${index}_$androidLocaleName.png')
+              .writeAsBytesSync(encodePng(resizedImage));
+        }
 
       case ScreenshotMode.tablet:
-        // save to ipad screenshot folder
-        final iOSLocaleName = _iOSLocaleMap[locale.languageCode]!;
-        final ipadPath = '$appPath/fastlane/screenshots/$iOSLocaleName';
-        Directory(ipadPath).createSync(recursive: true);
+        if (config.enableIos) {
+          final iOSLocaleName = _iOSLocaleMap[locale.languageCode]!;
+          final ipadPath = '$appPath/fastlane/screenshots/$iOSLocaleName';
+          Directory(ipadPath).createSync(recursive: true);
+          _deleteExistingScreenshots(
+            directoryPath: ipadPath,
+            deviceName: 'ipadPro129',
+            index: index,
+          );
+          File('$ipadPath/${index}_ipadPro129_$index.$screenshotId.png')
+              .writeAsBytesSync(encodePng(resizedImage));
+        }
+        if (config.enableAndroid) {
+          final androidLocaleName = _androidLocaleMap[locale.languageCode]!;
+          final androidTenInchPath =
+              '$appPath/fastlane/metadata/android/$androidLocaleName/images/tenInchScreenshots';
+          Directory(androidTenInchPath).createSync(recursive: true);
+          File('$androidTenInchPath/${index}_$androidLocaleName.png')
+              .writeAsBytesSync(encodePng(resizedImage));
+        }
 
-        // Delete existing files with pattern ${index}_ipadPro129_$index.*.png
+      case ScreenshotMode.macos:
+        // save to macOS screenshot folder
+        final macLocaleName = _iOSLocaleMap[locale.languageCode]!;
+        final macPath = '$appPath/fastlane/screenshots/$macLocaleName';
+        Directory(macPath).createSync(recursive: true);
+
         _deleteExistingScreenshots(
-          directoryPath: ipadPath,
-          deviceName: 'ipadPro129',
+          directoryPath: macPath,
+          deviceName: 'mac',
           index: index,
         );
 
-        File('$ipadPath/${index}_ipadPro129_$index.$screenshotId.png')
-            .writeAsBytesSync(encodePng(resizedImage));
-
-        // save to android tablet screenshot folder
-        final androidLocaleName = _androidLocaleMap[locale.languageCode]!;
-        final androidTenInchPath =
-            '$appPath/fastlane/metadata/android/$androidLocaleName/images/tenInchScreenshots';
-        Directory(androidTenInchPath).createSync(recursive: true);
-        File('$androidTenInchPath/${index}_$androidLocaleName.png')
+        File('$macPath/${index}_mac_$index.$screenshotId.png')
             .writeAsBytesSync(encodePng(resizedImage));
     }
   }

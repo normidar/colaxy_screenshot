@@ -17,6 +17,9 @@ class ScreenshotConfig {
     this.captureDelay = const Duration(milliseconds: 500),
     this.backgroundColor = const Color(0xFF1E1E1E),
     this.titleStyle,
+    this.enableIos = true,
+    this.enableAndroid = true,
+    this.enableMacos = false,
   });
 
   final Widget featureGraphicPage;
@@ -42,4 +45,13 @@ class ScreenshotConfig {
 
   /// Title text style
   final TextStyle? titleStyle;
+
+  /// Whether to capture iOS screenshots (default: true)
+  final bool enableIos;
+
+  /// Whether to capture Android screenshots (default: true)
+  final bool enableAndroid;
+
+  /// Whether to capture macOS screenshots (default: false)
+  final bool enableMacos;
 }
