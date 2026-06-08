@@ -42,6 +42,20 @@ class ScreenshotService {
 
   GlobalKey? _appKey;
 
+  // MacBook Pro の screenBounds (device.dart に定義されている実際のディスプレイ領域)
+  // screenPath・screenSize をこの領域全体に上書きすることでフルスクリーン表示にする
+  static final DeviceInfo _macBookProFullScreen = () {
+    const pixelRatio = 2.0;
+    const screenBounds = Rect.fromLTWH(346.68, 98.2, 2298.82, 1437.32);
+    return Devices.macOS.macBookPro.copyWith(
+      screenPath: Path()..addRect(screenBounds),
+      screenSize: Size(
+        screenBounds.width / pixelRatio,
+        screenBounds.height / pixelRatio,
+      ),
+    );
+  }();
+
   /// Run the screenshot workflow
   Future<void> executeScreenshots() async {
     if (config.enableAndroid) {
@@ -218,7 +232,7 @@ class ScreenshotService {
                     device: switch (modeInfo.mode) {
                       ScreenshotMode.phone => Devices.ios.iPhone13,
                       ScreenshotMode.tablet => Devices.ios.iPad,
-                      ScreenshotMode.macos => Devices.macOS.macBookPro,
+                      ScreenshotMode.macos => _macBookProFullScreen,
                     },
                     screen: page.widget(),
                   ),
